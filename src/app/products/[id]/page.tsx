@@ -66,74 +66,76 @@ export default function ProductDetailPage() {
             </Link>
         </Button>
       </div>
-      <Card>
-        <CardContent className="p-4 md:p-6 grid md:grid-cols-2 gap-8">
-            <div className="relative aspect-video rounded-lg overflow-hidden">
-                <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={product.dataAiHint}
-                />
-            </div>
-            <div className="flex flex-col justify-center">
-                <Badge 
-                    className="w-fit mb-2"
-                    variant={product.availability === 'In Stock' ? 'default' : 'destructive'}
-                >
-                    {product.availability}
-                </Badge>
-                <h1 className="text-3xl md:text-4xl font-bold font-headline">{product.name}</h1>
-                <p className="text-primary font-bold text-3xl mt-4">
-                    ₹{(product.price * quantity).toFixed(2)}
-                    <span className="text-lg font-normal text-muted-foreground"> / {quantity} kg</span>
-                </p>
-                <p className="text-muted-foreground mt-4">
-                    A brief description of the product will go here. For now, enjoy our fresh and high-quality {product.name.toLowerCase()}.
-                </p>
+      <div className="max-w-4xl mx-auto">
+        <Card>
+            <CardContent className="p-4 md:p-6 grid md:grid-cols-2 gap-8">
+                <div className="relative aspect-video rounded-lg overflow-hidden">
+                    <Image
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        className="object-cover"
+                        data-ai-hint={product.dataAiHint}
+                    />
+                </div>
+                <div className="flex flex-col justify-center">
+                    <Badge 
+                        className="w-fit mb-2"
+                        variant={product.availability === 'In Stock' ? 'default' : 'destructive'}
+                    >
+                        {product.availability}
+                    </Badge>
+                    <h1 className="text-3xl md:text-4xl font-bold font-headline">{product.name}</h1>
+                    <p className="text-primary font-bold text-3xl mt-4">
+                        ₹{(product.price * quantity).toFixed(2)}
+                        <span className="text-lg font-normal text-muted-foreground"> / {quantity} kg</span>
+                    </p>
+                    <p className="text-muted-foreground mt-4">
+                        A brief description of the product will go here. For now, enjoy our fresh and high-quality {product.name.toLowerCase()}.
+                    </p>
 
-                <div className="mt-6">
-                    <Label htmlFor="quantity" className="text-sm font-medium">Quantity (kg)</Label>
-                    <div className="flex items-center gap-2 mt-2">
-                        <Button variant="outline" size="icon" className="h-10 w-10" onClick={() => handleQuantityChange(-0.5)}>
-                            <Minus className="h-4 w-4" />
+                    <div className="mt-6">
+                        <Label htmlFor="quantity" className="text-sm font-medium">Quantity (kg)</Label>
+                        <div className="flex items-center gap-2 mt-2">
+                            <Button variant="outline" size="icon" className="h-10 w-10" onClick={() => handleQuantityChange(-0.5)}>
+                                <Minus className="h-4 w-4" />
+                            </Button>
+                            <Input 
+                                id="quantity"
+                                type="number"
+                                value={quantity}
+                                onChange={(e) => setQuantity(parseFloat(e.target.value) || 0.5)}
+                                className="w-20 text-center"
+                                step="0.5"
+                                min="0.5"
+                            />
+                            <Button variant="outline" size="icon" className="h-10 w-10" onClick={() => handleQuantityChange(0.5)}>
+                                <Plus className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 flex flex-col sm:flex-row gap-4">
+                        <Button 
+                            size="lg"
+                            onClick={handleAddToCart} 
+                            disabled={product.availability === 'Out of Stock'}
+                        >
+                            <PlusCircle className="mr-2 h-5 w-5" /> Add to Cart
                         </Button>
-                        <Input 
-                            id="quantity"
-                            type="number"
-                            value={quantity}
-                            onChange={(e) => setQuantity(parseFloat(e.target.value) || 0.5)}
-                            className="w-20 text-center"
-                            step="0.5"
-                            min="0.5"
-                        />
-                        <Button variant="outline" size="icon" className="h-10 w-10" onClick={() => handleQuantityChange(0.5)}>
-                            <Plus className="h-4 w-4" />
+                         <Button 
+                            size="lg"
+                            variant="outline"
+                            onClick={handleBuyNow} 
+                            disabled={product.availability === 'Out of Stock'}
+                        >
+                            <ShoppingBag className="mr-2 h-5 w-5" /> Buy Now
                         </Button>
                     </div>
                 </div>
-
-                <div className="mt-6 flex flex-col sm:flex-row gap-4">
-                    <Button 
-                        size="lg"
-                        onClick={handleAddToCart} 
-                        disabled={product.availability === 'Out of Stock'}
-                    >
-                        <PlusCircle className="mr-2 h-5 w-5" /> Add to Cart
-                    </Button>
-                     <Button 
-                        size="lg"
-                        variant="outline"
-                        onClick={handleBuyNow} 
-                        disabled={product.availability === 'Out of Stock'}
-                    >
-                        <ShoppingBag className="mr-2 h-5 w-5" /> Buy Now
-                    </Button>
-                </div>
-            </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
