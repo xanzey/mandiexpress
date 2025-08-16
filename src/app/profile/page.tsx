@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { withProtected, useAuth } from "@/context/auth-provider";
+import { Phone } from "lucide-react";
 
 function ProfilePage() {
   const { user } = useAuth();
@@ -17,11 +18,13 @@ function ProfilePage() {
           <div className="flex items-center space-x-4">
             <Avatar className="h-20 w-20">
               <AvatarImage src="https://placehold.co/128x128.png" alt="User" data-ai-hint="person portrait" />
-              <AvatarFallback>{user?.email?.[0].toUpperCase()}</AvatarFallback>
+              <AvatarFallback>
+                <Phone />
+              </AvatarFallback>
             </Avatar>
             <div>
               <CardTitle className="text-2xl">User</CardTitle>
-              <p className="text-muted-foreground">{user?.email}</p>
+              <p className="text-muted-foreground">{user?.phoneNumber}</p>
             </div>
           </div>
         </CardHeader>
@@ -36,7 +39,7 @@ function ProfilePage() {
             </div>
             <div>
               <h4 className="font-semibold">Phone Number</h4>
-              <p className="text-muted-foreground">+91 98765 43210</p>
+              <p className="text-muted-foreground">{user?.phoneNumber}</p>
             </div>
              <div>
               <h4 className="font-semibold">Member Since</h4>

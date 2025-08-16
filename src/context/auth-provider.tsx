@@ -4,11 +4,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
   signOut,
   User,
-  Auth,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  ConfirmationResult,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
@@ -16,8 +16,8 @@ import { useRouter } from "next/navigation";
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, pass: string) => Promise<any>;
-  signup: (email: string, pass: string) => Promise<any>;
+  sendOtp: (phone: string) => Promise<ConfirmationResult>;
+  verifyOtp: (confirmationResult: ConfirmationResult, otp: string) => Promise<any>;
   logout: () => Promise<any>;
 }
 
@@ -36,13 +36,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => unsubscribe();
   }, []);
-
-  const login = (email: string, pass: string) => {
-    return signInWithEmailAndPassword(auth, email, pass);
+  
+  const setupRecaptcha = () => {
+    if (typeof window !== 'undefined' && !window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        'size': 'invisible',
+        'callback': (response: any) => {
+          // reCAPTCHA solved, allow signInWithPhoneNumber.
+        }
+      });
+    }
   };
 
-  const signup = (email: string, pass: string) => {
-    return createUserWithEmailAndPassword(auth, email, pass);
+  const sendOtp = (phone: string) => {
+    setupRecaptcha();
+    const appVerifier = window.recaptchaVerifier;
+    return signInWithPhoneNumber(auth, phone, appVerifier);
+  };
+
+  const verifyOtp = (confirmationResult: ConfirmationResult, otp: string) => {
+    return confirmationResult.confirm(otp);
   };
 
   const logout = () => {
@@ -54,8 +67,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = {
     user,
     loading,
-    login,
-    signup,
+    sendOtp,
+    verifyOtp,
     logout,
   };
 
@@ -101,4 +114,10 @@ export function withProtected(Component: React.ComponentType<any>) {
 
     return <Component {...props} />;
   };
+}
+
+declare global {
+  interface Window {
+    recaptchaVerifier: RecaptchaVerifier;
+  }
 }
