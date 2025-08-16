@@ -22,7 +22,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevents the Link from navigating
     e.stopPropagation(); // Prevents the event from bubbling up to the Link
-    addToCart(product);
+    addToCart(product, 1); // Add 1kg by default from product card
     toast({
       title: `${product.name} added to cart!`,
       description: "You can view your cart by clicking the shopping cart icon.",

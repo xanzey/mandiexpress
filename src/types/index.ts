@@ -1,7 +1,8 @@
+
 export type Product = {
   id: string;
   name: string;
-  price: number;
+  price: number; // Price per kg
   image: string;
   availability: 'In Stock' | 'Out of Stock';
   dataAiHint?: string;
@@ -9,7 +10,7 @@ export type Product = {
 
 export type CartItem = {
   product: Product;
-  quantity: number;
+  quantity: number; // Quantity in kg
 };
 
 export type Order = {

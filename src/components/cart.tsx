@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -72,14 +73,15 @@ export function Cart() {
                                 <div className="flex-1">
                                     <h4 className="font-semibold">{item.product.name}</h4>
                                     <p className="text-sm text-muted-foreground">
-                                        ₹{item.product.price.toFixed(2)}
+                                        ₹{item.product.price.toFixed(2)} / kg
                                     </p>
+                                    <p className="font-semibold">Total: ₹{(item.product.price * item.quantity).toFixed(2)}</p>
                                     <div className="flex items-center gap-2 mt-2">
-                                        <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.product.id, item.quantity - 1)}>
+                                        <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.product.id, item.quantity - 0.5)}>
                                             <Minus className="h-4 w-4" />
                                         </Button>
-                                        <span>{item.quantity}</span>
-                                        <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.product.id, item.quantity + 1)}>
+                                        <span>{item.quantity} kg</span>
+                                        <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.product.id, item.quantity + 0.5)}>
                                             <Plus className="h-4 w-4" />
                                         </Button>
                                     </div>

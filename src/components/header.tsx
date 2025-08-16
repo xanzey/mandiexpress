@@ -19,7 +19,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export function Header() {
-  const { cartCount } = useCart();
+  const { cartCount, isSheetOpen, setSheetOpen } = useCart();
   const { user, logout } = useAuth();
 
   return (
@@ -87,13 +87,13 @@ export function Header() {
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
           </div>
-          <Sheet>
+          <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="h-5 w-5" />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-accent-foreground text-xs">
-                    {cartCount}
+                    {cartItems.length > 0 ? cartItems.reduce((acc, item) => acc + item.quantity, 0).toFixed(1) : 0}
                   </span>
                 )}
               </Button>
@@ -118,7 +118,7 @@ export function Header() {
                         <div className="flex flex-col space-y-1">
                             <p className="text-sm font-medium leading-none">My Account</p>
                             <p className="text-xs leading-none text-muted-foreground">
-                                {user.email}
+                                {user.email || user.phoneNumber}
                             </p>
                         </div>
                     </DropdownMenuLabel>

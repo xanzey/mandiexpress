@@ -1,22 +1,26 @@
 
 "use client";
 
-import { useParams } from 'next/navigation';
+import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { mockProducts } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/context/cart-provider';
 import { useToast } from '@/hooks/use-toast';
-import { PlusCircle, ChevronLeft } from 'lucide-react';
+import { PlusCircle, ChevronLeft, ShoppingBag, Minus, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 
 export default function ProductDetailPage() {
   const params = useParams();
   const { id } = params;
-  const { addToCart } = useCart();
+  const { addToCart, setSheetOpen } = useCart();
   const { toast } = useToast();
+  const router = useRouter();
+  const [quantity, setQuantity] = useState(1);
 
   const product = mockProducts.find((p) => p.id === id);
 
@@ -30,14 +34,26 @@ export default function ProductDetailPage() {
       </div>
     );
   }
+  
+  const handleQuantityChange = (amount: number) => {
+    setQuantity(prev => {
+        const newQuantity = prev + amount;
+        return newQuantity >= 0.5 ? newQuantity : 0.5;
+    });
+  }
 
   const handleAddToCart = () => {
-    addToCart(product);
+    addToCart(product, quantity);
     toast({
-      title: `${product.name} added to cart!`,
+      title: `${quantity} kg of ${product.name} added to cart!`,
       description: "You can view your cart by clicking the shopping cart icon.",
     });
   };
+  
+  const handleBuyNow = () => {
+    addToCart(product, quantity);
+    setSheetOpen(true);
+  }
 
   return (
     <div className="container py-8">
@@ -69,19 +85,49 @@ export default function ProductDetailPage() {
                 </Badge>
                 <h1 className="text-3xl md:text-4xl font-bold font-headline">{product.name}</h1>
                 <p className="text-primary font-bold text-3xl mt-4">
-                    ₹{product.price.toFixed(2)}
-                    <span className="text-lg font-normal text-muted-foreground"> / kg</span>
+                    ₹{(product.price * quantity).toFixed(2)}
+                    <span className="text-lg font-normal text-muted-foreground"> / {quantity} kg</span>
                 </p>
                 <p className="text-muted-foreground mt-4">
                     A brief description of the product will go here. For now, enjoy our fresh and high-quality {product.name.toLowerCase()}.
                 </p>
+
                 <div className="mt-6">
+                    <Label htmlFor="quantity" className="text-sm font-medium">Quantity (kg)</Label>
+                    <div className="flex items-center gap-2 mt-2">
+                        <Button variant="outline" size="icon" className="h-10 w-10" onClick={() => handleQuantityChange(-0.5)}>
+                            <Minus className="h-4 w-4" />
+                        </Button>
+                        <Input 
+                            id="quantity"
+                            type="number"
+                            value={quantity}
+                            onChange={(e) => setQuantity(parseFloat(e.target.value) || 0.5)}
+                            className="w-20 text-center"
+                            step="0.5"
+                            min="0.5"
+                        />
+                        <Button variant="outline" size="icon" className="h-10 w-10" onClick={() => handleQuantityChange(0.5)}>
+                            <Plus className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="mt-6 flex flex-col sm:flex-row gap-4">
                     <Button 
                         size="lg"
                         onClick={handleAddToCart} 
                         disabled={product.availability === 'Out of Stock'}
                     >
                         <PlusCircle className="mr-2 h-5 w-5" /> Add to Cart
+                    </Button>
+                     <Button 
+                        size="lg"
+                        variant="outline"
+                        onClick={handleBuyNow} 
+                        disabled={product.availability === 'Out of Stock'}
+                    >
+                        <ShoppingBag className="mr-2 h-5 w-5" /> Buy Now
                     </Button>
                 </div>
             </div>
