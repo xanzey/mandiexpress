@@ -13,6 +13,7 @@ import { PlusCircle, ChevronLeft, ShoppingBag, Minus, Plus } from 'lucide-react'
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function ProductDetailPage() {
   const params = useParams();
