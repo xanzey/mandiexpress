@@ -1,16 +1,32 @@
 
 "use client";
 
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { withProtected, useAuth } from "@/context/auth-provider";
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, Home, Pencil } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 function ProfilePage() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const isPhoneAuth = !!user?.phoneNumber;
+
+  const [shippingAddress, setShippingAddress] = useState("");
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
   
+  const handleAddressSave = () => {
+    setIsEditingAddress(false);
+    toast({
+        title: "Address Saved!",
+        description: "Your shipping address has been updated.",
+    });
+  };
+
   return (
     <div className="container py-8">
       <h1 className="text-3xl font-bold mb-8 font-headline">My Profile</h1>
@@ -33,10 +49,28 @@ function ProfilePage() {
           <Separator className="my-4" />
           <div className="space-y-4">
             <div>
-              <h4 className="font-semibold">Shipping Address</h4>
-              <p className="text-muted-foreground">
-                123 Green Valley, Fresh Fields, Veggieland, 456789
-              </p>
+              <div className="flex justify-between items-center">
+                <h4 className="font-semibold flex items-center gap-2"><Home className="h-4 w-4" /> Shipping Address</h4>
+                {!isEditingAddress && (
+                    <Button variant="ghost" size="icon" onClick={() => setIsEditingAddress(true)}>
+                        <Pencil className="h-4 w-4" />
+                    </Button>
+                )}
+              </div>
+              {isEditingAddress ? (
+                <div className="mt-2 space-y-2">
+                    <Input 
+                        value={shippingAddress}
+                        onChange={(e) => setShippingAddress(e.target.value)}
+                        placeholder="Enter your full address"
+                    />
+                    <Button onClick={handleAddressSave}>Save Address</Button>
+                </div>
+              ) : (
+                <p className="text-muted-foreground mt-1 pl-6">
+                  {shippingAddress || "Please add your shipping address."}
+                </p>
+              )}
             </div>
             {user?.phoneNumber && (
                 <div>
