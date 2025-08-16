@@ -5,10 +5,9 @@ import Image from "next/image";
 import type { Product } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/context/cart-provider";
 import { useToast } from "@/hooks/use-toast";
-import { PlusCircle } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 
 interface ProductCardProps {
@@ -20,52 +19,47 @@ export function ProductCard({ product }: ProductCardProps) {
   const { toast } = useToast();
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault(); // Prevents the Link from navigating
-    e.stopPropagation(); // Prevents the event from bubbling up to the Link
-    addToCart(product, 1); // Add 1kg by default from product card
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(product, 1);
     toast({
       title: `${product.name} added to cart!`,
-      description: "You can view your cart by clicking the shopping cart icon.",
     });
   };
 
   return (
-    <Link href={`/products/${product.id}`} className="group">
-        <Card className="flex flex-col overflow-hidden transition-shadow group-hover:shadow-lg h-full">
-            <CardHeader className="p-0">
-                <div className="relative aspect-video">
+    <Card className="flex flex-col overflow-hidden h-full group">
+        <Link href={`/products/${product.id}`} className="flex flex-col h-full">
+            <CardHeader className="p-2">
+                <div className="relative aspect-square">
                     <Image
                         src={product.image}
                         alt={product.name}
                         fill
-                        className="object-cover"
+                        className="object-contain"
                         data-ai-hint={product.dataAiHint}
                     />
-                    <Badge 
-                        className="absolute top-2 right-2"
-                        variant={product.availability === 'In Stock' ? 'default' : 'destructive'}
-                    >
-                        {product.availability}
-                    </Badge>
                 </div>
             </CardHeader>
-          <CardContent className="p-4 flex-1">
-            <CardTitle className="text-lg font-headline">{product.name}</CardTitle>
-            <CardDescription className="text-primary font-bold text-xl mt-2">
-                ₹{product.price.toFixed(2)}
-                <span className="text-sm font-normal text-muted-foreground"> / kg</span>
-            </CardDescription>
+          <CardContent className="p-2 flex-1">
+            <p className="text-muted-foreground text-xs">1 kg</p>
+            <CardTitle className="text-sm font-semibold">{product.name}</CardTitle>
           </CardContent>
-          <CardFooter className="p-4 pt-0">
+          <CardFooter className="p-2 pt-0 flex justify-between items-center">
+             <div className="flex flex-col">
+                 <p className="text-sm text-muted-foreground line-through">₹{(product.price * 1.1).toFixed(2)}</p>
+                 <p className="font-bold">₹{product.price.toFixed(2)}</p>
+             </div>
             <Button 
-                className="w-full" 
+                size="icon"
+                className="w-10 h-10 bg-accent/20 text-accent hover:bg-accent/30"
                 onClick={handleAddToCart} 
                 disabled={product.availability === 'Out of Stock'}
             >
-                <PlusCircle className="mr-2 h-4 w-4" /> Add to Cart
+                <Plus className="h-5 w-5" />
             </Button>
           </CardFooter>
-        </Card>
-    </Link>
+        </Link>
+    </Card>
   );
 }

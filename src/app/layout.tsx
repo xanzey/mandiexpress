@@ -5,6 +5,8 @@ import { CartProvider } from '@/context/cart-provider';
 import { AuthProvider } from '@/context/auth-provider';
 import { Header } from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
+import { BottomNav } from '@/components/bottom-nav';
+import { FloatingCartButton } from '@/components/floating-cart-button';
 
 export const metadata: Metadata = {
   title: 'MandiExpress',
@@ -23,12 +25,14 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
       </head>
-      <body className="font-body antialiased min-h-screen bg-background" suppressHydrationWarning>
+      <body className="font-body antialiased bg-background" suppressHydrationWarning>
         <AuthProvider>
           <CartProvider>
             <div className="relative flex min-h-screen flex-col">
               <Header />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 pb-24">{children}</main>
+              <FloatingCartButton />
+              <BottomNav />
             </div>
             <Toaster />
           </CartProvider>

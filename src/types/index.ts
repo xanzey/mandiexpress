@@ -21,3 +21,10 @@ export type Order = {
   deliverySlot: 'Morning (7-9 AM)' | 'Evening (5-8 PM)';
   date: string;
 };
+
+export type Category = {
+    id: string;
+    name: string;
+    moreCount: number;
+    productImages: { url: string; dataAiHint: string }[];
+}
