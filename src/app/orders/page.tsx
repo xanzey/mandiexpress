@@ -1,7 +1,6 @@
 
 "use client";
 
-import { useState } from 'react';
 import { OrderStatus } from '@/components/order-status';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -12,7 +11,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 function OrdersPage() {
-  const [orders] = useState<Order[]>([]); // This will be populated from your database in the future
+  const orders: Order[] = []; // This will be populated from your database in the future
 
   return (
     <div className="container py-8">
