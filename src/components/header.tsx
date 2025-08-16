@@ -45,6 +45,12 @@ export function Header() {
             >
               My Orders
             </Link>}
+             {user && <Link
+              href="/wallet"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Wallet
+            </Link>}
           </nav>
         </div>
         
@@ -71,6 +77,7 @@ export function Header() {
               <div className="flex flex-col space-y-3">
                 <Link href="/" className="text-muted-foreground">Daily Rates</Link>
                 {user && <Link href="/orders" className="text-muted-foreground">My Orders</Link>}
+                {user && <Link href="/wallet" className="text-muted-foreground">Wallet & Referrals</Link>}
                 {user && <Link href="/profile" className="text-muted-foreground">Profile</Link>}
               </div>
             </div>
@@ -121,6 +128,9 @@ export function Header() {
                     </DropdownMenuItem>
                      <DropdownMenuItem asChild>
                        <Link href="/orders">My Orders</Link>
+                    </DropdownMenuItem>
+                     <DropdownMenuItem asChild>
+                       <Link href="/wallet">Wallet</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={logout}>
