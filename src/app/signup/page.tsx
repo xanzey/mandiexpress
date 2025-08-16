@@ -31,7 +31,8 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const result = await sendOtp(phone);
+      const formattedPhone = `+91${phone}`;
+      const result = await sendOtp(formattedPhone);
       setConfirmationResult(result);
       setOtpSent(true);
       toast({
@@ -87,7 +88,7 @@ export default function SignupPage() {
                     <Input
                     id="phone"
                     type="tel"
-                    placeholder="+91 98765 43210"
+                    placeholder="9876543210"
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
