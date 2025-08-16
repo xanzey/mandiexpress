@@ -5,14 +5,15 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { CategoryCard } from '@/components/category-card';
+import Link from 'next/link';
 
 export default function Home() {
   const categories = [
-    { name: 'All', icon: 'https://placehold.co/48x48.png', dataAiHint: 'store' },
-    { name: 'Vegetables', icon: 'https://placehold.co/48x48.png', dataAiHint: 'vegetables' },
-    { name: 'Fruits', icon: 'https://placehold.co/48x48.png', dataAiHint: 'fruits' },
-    { name: 'Dairy', icon: 'https://placehold.co/48x48.png', dataAiHint: 'dairy products' },
-    { name: 'Masala', icon: 'https://placehold.co/48x48.png', dataAiHint: 'spices' },
+    { name: 'All', icon: 'https://placehold.co/48x48.png', dataAiHint: 'store', href: '/products' },
+    { name: 'Vegetables', icon: 'https://placehold.co/48x48.png', dataAiHint: 'vegetables', href: '/products?category=vegetables' },
+    { name: 'Fruits', icon: 'https://placehold.co/48x48.png', dataAiHint: 'fruits', href: '/products?category=fruits' },
+    { name: 'Dairy', icon: 'https://placehold.co/48x48.png', dataAiHint: 'dairy products', href: '/products?category=dairy' },
+    { name: 'Masala', icon: 'https://placehold.co/48x48.png', dataAiHint: 'spices', href: '/products?category=masala' },
   ];
 
   return (
@@ -25,12 +26,12 @@ export default function Home() {
         </div>
         <div className="flex justify-around mb-6">
             {categories.map(cat => (
-                <div key={cat.name} className="flex flex-col items-center gap-2">
+                <Link href={cat.href} key={cat.name} className="flex flex-col items-center gap-2">
                     <div className={`p-1 rounded-full shadow-sm transition-transform hover:scale-105 ${cat.name === 'All' ? 'bg-primary' : ''}`}>
                          <Image src={cat.icon} alt={cat.name} width={48} height={48} className="rounded-full bg-background" data-ai-hint={cat.dataAiHint} />
                     </div>
                     <span className={`text-xs font-medium ${cat.name === 'All' ? 'text-primary' : 'text-muted-foreground'}`}>{cat.name}</span>
-                </div>
+                </Link>
             ))}
         </div>
       </div>
