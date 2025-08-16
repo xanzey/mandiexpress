@@ -18,7 +18,7 @@ export function FloatingCartButton() {
   return (
     <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 w-[90%]">
         <Button 
-            className="w-full h-14 rounded-xl bg-accent text-accent-foreground text-lg font-bold flex justify-between items-center shadow-lg hover:bg-accent/90"
+            className="w-full h-14 rounded-xl bg-accent text-accent-foreground text-lg font-bold flex justify-between items-center shadow-lg hover:bg-accent/90 transition-transform hover:scale-105"
             onClick={() => setSheetOpen(true)}
         >
             <div className="flex items-center gap-2">

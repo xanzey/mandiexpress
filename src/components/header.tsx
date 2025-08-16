@@ -14,7 +14,7 @@ export function Header() {
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-primary text-primary-foreground">
+    <header className="sticky top-0 z-50 w-full bg-primary text-primary-foreground shadow-md">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex flex-col">
             <span className="text-sm font-bold uppercase">MandiExpress in</span>
