@@ -1,15 +1,26 @@
+
 "use client";
 
 import Link from "next/link";
-import { Leaf, ShoppingCart, Menu } from "lucide-react";
-
+import { Leaf, ShoppingCart, Menu, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Cart } from "@/components/cart";
 import { useCart } from "@/context/cart-provider";
+import { useAuth } from "@/context/auth-provider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export function Header() {
   const { cartCount } = useCart();
+  const { user, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -28,18 +39,12 @@ export function Header() {
             >
               Daily Rates
             </Link>
-            <Link
+            {user && <Link
               href="/orders"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
               My Orders
-            </Link>
-            <Link
-              href="/profile"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Profile
-            </Link>
+            </Link>}
           </nav>
         </div>
         
@@ -65,8 +70,8 @@ export function Header() {
             <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
               <div className="flex flex-col space-y-3">
                 <Link href="/" className="text-muted-foreground">Daily Rates</Link>
-                <Link href="/orders" className="text-muted-foreground">My Orders</Link>
-                <Link href="/profile" className="text-muted-foreground">Profile</Link>
+                {user && <Link href="/orders" className="text-muted-foreground">My Orders</Link>}
+                {user && <Link href="/profile" className="text-muted-foreground">Profile</Link>}
               </div>
             </div>
           </SheetContent>
@@ -90,6 +95,46 @@ export function Header() {
               <Cart />
             </SheetContent>
           </Sheet>
+
+          {user ? (
+             <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                        <Avatar className="h-8 w-8">
+                            <AvatarImage src="https://placehold.co/32x32.png" alt="User" data-ai-hint="person portrait" />
+                            <AvatarFallback>{user.email?.[0].toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                            <p className="text-sm font-medium leading-none">My Account</p>
+                            <p className="text-xs leading-none text-muted-foreground">
+                                {user.email}
+                            </p>
+                        </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                       <Link href="/profile">Profile</Link>
+                    </DropdownMenuItem>
+                     <DropdownMenuItem asChild>
+                       <Link href="/orders">My Orders</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={logout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Log out</span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button asChild>
+              <Link href="/login">Login</Link>
+            </Button>
+          )}
+
         </div>
       </div>
     </header>

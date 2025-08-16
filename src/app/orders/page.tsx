@@ -1,9 +1,13 @@
+
+"use client";
+
 import { OrderStatus } from '@/components/order-status';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { withProtected } from '@/context/auth-provider';
 import { mockOrders } from '@/lib/mock-data';
 
-export default function OrdersPage() {
+function OrdersPage() {
   return (
     <div className="container py-8">
       <h1 className="text-3xl font-bold mb-2 font-headline">My Orders</h1>
@@ -42,3 +46,5 @@ export default function OrdersPage() {
     </div>
   );
 }
+
+export default withProtected(OrdersPage);
