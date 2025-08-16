@@ -35,10 +35,10 @@ export function Header() {
               My Orders
             </Link>
             <Link
-              href="/admin/sales-report"
+              href="/profile"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
-              Admin
+              Profile
             </Link>
           </nav>
         </div>
@@ -66,7 +66,7 @@ export function Header() {
               <div className="flex flex-col space-y-3">
                 <Link href="/" className="text-muted-foreground">Daily Rates</Link>
                 <Link href="/orders" className="text-muted-foreground">My Orders</Link>
-                <Link href="/admin/sales-report" className="text-muted-foreground">Admin</Link>
+                <Link href="/profile" className="text-muted-foreground">Profile</Link>
               </div>
             </div>
           </SheetContent>
