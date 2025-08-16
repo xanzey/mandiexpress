@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, Bot, Copy } from "lucide-react";
+import { Terminal, Bot, Copy, FileJson, AreaChart } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 
 interface SalesReportGeneratorProps {
@@ -43,7 +43,10 @@ export function SalesReportGenerator({ generateReportAction }: SalesReportGenera
             <form action={handleAction} className="space-y-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Input Data</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                            <FileJson className="h-5 w-5" />
+                            Input Data
+                        </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
@@ -73,7 +76,10 @@ export function SalesReportGenerator({ generateReportAction }: SalesReportGenera
             <div className="space-y-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle>Generated Report</CardTitle>
+                         <CardTitle className="flex items-center gap-2">
+                            <AreaChart className="h-5 w-5" />
+                            Generated Report
+                        </CardTitle>
                         {result.report && (
                             <Button variant="ghost" size="icon" onClick={handleCopy}>
                                 <Copy className="h-4 w-4" />
