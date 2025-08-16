@@ -1,13 +1,26 @@
 
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { mockCategories } from '@/lib/mock-data';
 import { Search, Mic } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { CategoryCard } from '@/components/category-card';
 import Link from 'next/link';
 
 export default function Home() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/products?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   const categories = [
     { name: 'All', icon: 'https://placehold.co/48x48.png', dataAiHint: 'store', href: '/products' },
     { name: 'Vegetables', icon: 'https://placehold.co/48x48.png', dataAiHint: 'vegetables', href: '/products?category=vegetables' },
@@ -19,11 +32,16 @@ export default function Home() {
   return (
     <div className="bg-primary/5">
       <div className="container pt-4 pb-8">
-        <div className="relative mb-4">
+        <form onSubmit={handleSearch} className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input placeholder='Search "gardening essentials"' className="pl-10 pr-10 h-12 rounded-xl shadow-sm" />
+          <Input 
+            placeholder='Search "gardening essentials"' 
+            className="pl-10 pr-10 h-12 rounded-xl shadow-sm" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
           <Mic className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-        </div>
+        </form>
         <div className="flex justify-around mb-6">
             {categories.map(cat => (
                 <Link href={cat.href} key={cat.name} className="flex flex-col items-center gap-2">
