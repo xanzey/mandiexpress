@@ -14,18 +14,11 @@ export function Header() {
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-primary text-primary-foreground shadow-md">
+    <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-green-500 to-green-600 text-primary-foreground shadow-md">
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex flex-col">
-            <span className="text-sm font-bold uppercase">MandiExpress in</span>
-            <div className="flex items-center">
-                <span className="text-lg font-bold">8 minutes</span>
-            </div>
-            <div className="flex items-center text-xs">
-                <span>HOME - JJ Colony, Near WTT</span>
-                <ChevronDown className="h-4 w-4" />
-            </div>
-        </div>
+        <Link href="/" className="text-2xl font-bold">
+            MandiExpress
+        </Link>
         
         <div className="flex items-center gap-4">
             <Link href="/wallet">
