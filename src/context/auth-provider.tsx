@@ -9,6 +9,8 @@ import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
   ConfirmationResult,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
@@ -18,6 +20,8 @@ interface AuthContextType {
   loading: boolean;
   sendOtp: (phone: string) => Promise<ConfirmationResult>;
   verifyOtp: (confirmationResult: ConfirmationResult, otp: string) => Promise<any>;
+  signUpWithEmail: (email: string, password: string) => Promise<any>;
+  signInWithEmail: (email: string, password: string) => Promise<any>;
   logout: () => Promise<any>;
 }
 
@@ -58,6 +62,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return confirmationResult.confirm(otp);
   };
 
+  const signUpWithEmail = (email: string, password: string) => {
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
+
+  const signInWithEmail = (email: string, password: string) => {
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+
   const logout = () => {
     return signOut(auth).then(() => {
         router.push('/');
@@ -69,6 +81,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     sendOtp,
     verifyOtp,
+    signUpWithEmail,
+    signInWithEmail,
     logout,
   };
 
