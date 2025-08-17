@@ -6,13 +6,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { withProtected, useAuth } from "@/context/auth-provider";
-import { Mail, Phone, Home, Pencil } from "lucide-react";
+import { Mail, Phone, Home, Pencil, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
 function ProfilePage() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { toast } = useToast();
   const isPhoneAuth = !!user?.phoneNumber;
 
@@ -25,6 +25,22 @@ function ProfilePage() {
         title: "Address Saved!",
         description: "Your shipping address has been updated.",
     });
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Logout Failed",
+        description: error.message,
+      });
+    }
   };
 
   return (
@@ -89,6 +105,11 @@ function ProfilePage() {
               <p className="text-muted-foreground">{user?.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', { month: 'long', year: 'numeric'}) : 'N/A'}</p>
             </div>
           </div>
+           <Separator className="my-4" />
+           <Button variant="destructive" className="w-full" onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+            </Button>
         </CardContent>
       </Card>
     </div>
