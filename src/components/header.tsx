@@ -15,7 +15,7 @@ export function Header() {
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-primary to-green-400 text-primary-foreground shadow-md">
+    <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-md">
       <div className="flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
             <Image src="/logo.png" alt="MandiExpress Logo" width={40} height={40} className="object-contain" />
@@ -35,7 +35,7 @@ export function Header() {
                   </Button>
               </Link>
             ) : (
-                <Button asChild variant="secondary" className="bg-primary-foreground text-green-600 hover:bg-primary-foreground/90">
+                <Button asChild variant="secondary" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
                     <Link href="/login">Login</Link>
                 </Button>
             )}
