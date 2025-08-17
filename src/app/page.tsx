@@ -19,6 +19,39 @@ export default function Home() {
   const { toast } = useToast();
   const recognitionRef = useRef<any>(null);
 
+  // For typing animation
+  const [placeholder, setPlaceholder] = useState('');
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const suggestions = ['"fresh vegetables"', '"juicy fruits"', '"dairy products"', '"exotic spices"'];
+
+  useEffect(() => {
+    const handleTyping = () => {
+      const currentSuggestion = suggestions[placeholderIndex];
+      
+      if (isDeleting) {
+        setPlaceholder(currentSuggestion.substring(0, charIndex - 1));
+        setCharIndex(charIndex - 1);
+      } else {
+        setPlaceholder(currentSuggestion.substring(0, charIndex + 1));
+        setCharIndex(charIndex + 1);
+      }
+
+      if (!isDeleting && charIndex === currentSuggestion.length) {
+        // Pause at end of word
+        setTimeout(() => setIsDeleting(true), 2000);
+      } else if (isDeleting && charIndex === 0) {
+        setIsDeleting(false);
+        setPlaceholderIndex((prev) => (prev + 1) % suggestions.length);
+      }
+    };
+
+    const typingTimeout = setTimeout(handleTyping, isDeleting ? 100 : 150);
+    return () => clearTimeout(typingTimeout);
+  }, [charIndex, isDeleting, placeholder, placeholderIndex, suggestions]);
+
+
   useEffect(() => {
     // Check for SpeechRecognition API
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
@@ -93,7 +126,7 @@ export default function Home() {
         <form onSubmit={handleSearch} className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input 
-            placeholder='Search "gardening essentials"' 
+            placeholder={`Search ${placeholder}|`}
             className="pl-10 pr-10 h-12 rounded-xl shadow-sm" 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
