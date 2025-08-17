@@ -153,7 +153,7 @@ function ProfilePage() {
           <div className="flex items-center space-x-4">
             <Avatar className="h-20 w-20">
               <AvatarImage src={user?.photoURL || undefined} alt="User" />
-              <AvatarFallback className="text-4xl bg-primary/10">
+              <AvatarFallback className="text-4xl bg-accent/10">
                 {user?.photoURL ? null : (isPhoneAuth ? '📞' : '✉️')}
               </AvatarFallback>
             </Avatar>

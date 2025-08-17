@@ -52,7 +52,7 @@ export function ProductCard({ product }: ProductCardProps) {
              </div>
             <Button 
                 size="icon"
-                className="w-10 h-10 bg-accent/20 text-accent hover:bg-accent/30"
+                className="w-10 h-10"
                 onClick={handleAddToCart} 
                 disabled={product.availability === 'Out of Stock'}
             >

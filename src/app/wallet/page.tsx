@@ -20,7 +20,7 @@ function WalletPage() {
                 <Card>
                     <CardHeader>
                         <div className="flex items-center gap-4">
-                            <WalletIcon className="h-8 w-8 text-primary" />
+                            <WalletIcon className="h-8 w-8 text-accent" />
                             <div>
                                 <CardTitle>My Wallet</CardTitle>
                                 <CardDescription>Your available balance</CardDescription>
