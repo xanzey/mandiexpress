@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -20,17 +20,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-
-interface Address {
-    name: string;
-    phone: string;
-    houseNo: string;
-    street: string;
-    landmark: string;
-    city: string;
-    state: string;
-    pincode: string;
-}
+import type { Address } from "@/types";
 
 function EditProfileDialog() {
     const { user, updateProfile } = useAuth();
@@ -98,26 +88,14 @@ function EditProfileDialog() {
 }
 
 function ProfilePage() {
-  const { user, logout } = useAuth();
+  const { user, userData, logout, updateUserAddress } = useAuth();
   const { toast } = useToast();
   const isPhoneAuth = !!user?.phoneNumber;
+  const address = userData?.address || null;
 
-  const [address, setAddress] = useState<Address | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  // Load address from localStorage when the component mounts
-  useEffect(() => {
-    try {
-      const savedAddress = localStorage.getItem('userAddress');
-      if (savedAddress) {
-        setAddress(JSON.parse(savedAddress));
-      }
-    } catch (error) {
-        console.error("Failed to parse address from localStorage", error)
-    }
-  }, []);
-
-  const handleAddressSave = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAddressSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const newAddress: Address = {
@@ -131,15 +109,20 @@ function ProfilePage() {
         pincode: formData.get('pincode') as string,
     };
     
-    // In a real app, you would save this to a database.
-    // For now, we use localStorage to persist it on the client's browser.
-    localStorage.setItem('userAddress', JSON.stringify(newAddress));
-    setAddress(newAddress);
-    setIsEditDialogOpen(false);
-    toast({
-        title: "Address Saved!",
-        description: "Your shipping address has been updated.",
-    });
+    try {
+        await updateUserAddress(newAddress);
+        setIsEditDialogOpen(false);
+        toast({
+            title: "Address Saved!",
+            description: "Your shipping address has been updated.",
+        });
+    } catch (error: any) {
+        toast({
+            variant: "destructive",
+            title: "Update Failed",
+            description: "Could not save address. Please try again.",
+        });
+    }
   };
   
   const handleLogout = async () => {

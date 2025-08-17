@@ -16,9 +16,16 @@ import {
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
+import type { Address } from "@/types";
+import { getUserData, updateUserData } from "@/services/user-data";
+
+interface UserData {
+    address: Address | null;
+}
 
 interface AuthContextType {
   user: User | null;
+  userData: UserData | null;
   loading: boolean;
   sendOtp: (phone: string) => Promise<ConfirmationResult>;
   verifyOtp: (confirmationResult: ConfirmationResult, otp: string) => Promise<any>;
@@ -26,18 +33,26 @@ interface AuthContextType {
   signInWithEmail: (email: string, password: string) => Promise<any>;
   logout: () => Promise<any>;
   updateProfile: (data: Partial<UserInfo>) => Promise<void>;
+  updateUserAddress: (address: Address) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
+      if (user) {
+        const data = await getUserData(user.uid);
+        setUserData(data as UserData);
+      } else {
+        setUserData(null);
+      }
       setLoading(false);
     });
 
@@ -82,13 +97,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const updateProfile = async (data: Partial<UserInfo>) => {
     if (auth.currentUser) {
         await firebaseUpdateProfile(auth.currentUser, data);
-        // Create a new user object to force re-render
         setUser(prevUser => prevUser ? Object.assign(Object.create(Object.getPrototypeOf(prevUser)), prevUser) : null);
+    }
+  };
+
+  const updateUserAddress = async (address: Address) => {
+    if (auth.currentUser) {
+        await updateUserData(auth.currentUser.uid, { address });
+        setUserData(prevData => ({ ...prevData, address }));
     }
   };
 
   const value = {
     user,
+    userData,
     loading,
     sendOtp,
     verifyOtp,
@@ -96,6 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signInWithEmail,
     logout,
     updateProfile,
+    updateUserAddress
   };
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;

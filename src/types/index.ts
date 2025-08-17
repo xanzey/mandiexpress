@@ -28,3 +28,14 @@ export type Category = {
     moreCount: number;
     productImages: { url: string; dataAiHint: string }[];
 }
+
+export interface Address {
+    name: string;
+    phone: string;
+    houseNo: string;
+    street: string;
+    landmark: string;
+    city: string;
+    state: string;
+    pincode: string;
+}
