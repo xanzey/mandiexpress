@@ -11,6 +11,8 @@ import {
   ConfirmationResult,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile as firebaseUpdateProfile,
+  type UserInfo
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
@@ -23,6 +25,7 @@ interface AuthContextType {
   signUpWithEmail: (email: string, password: string) => Promise<any>;
   signInWithEmail: (email: string, password: string) => Promise<any>;
   logout: () => Promise<any>;
+  updateProfile: (data: Partial<UserInfo>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -76,6 +79,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const updateProfile = async (data: Partial<UserInfo>) => {
+    if (auth.currentUser) {
+        await firebaseUpdateProfile(auth.currentUser, data);
+        // Create a new user object to force re-render
+        setUser(prevUser => prevUser ? Object.assign(Object.create(Object.getPrototypeOf(prevUser)), prevUser) : null);
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -84,6 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUpWithEmail,
     signInWithEmail,
     logout,
+    updateProfile,
   };
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;

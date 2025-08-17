@@ -32,6 +32,71 @@ interface Address {
     pincode: string;
 }
 
+function EditProfileDialog() {
+    const { user, updateProfile } = useAuth();
+    const [name, setName] = useState(user?.displayName || "");
+    const [isOpen, setIsOpen] = useState(false);
+    const { toast } = useToast();
+
+    const handleSave = async () => {
+        if (!name.trim()) {
+            toast({
+                variant: "destructive",
+                title: "Name cannot be empty.",
+            });
+            return;
+        }
+        try {
+            await updateProfile({ displayName: name });
+            toast({
+                title: "Profile updated!",
+                description: "Your name has been successfully changed.",
+            });
+            setIsOpen(false);
+        } catch (error: any) {
+            toast({
+                variant: "destructive",
+                title: "Update Failed",
+                description: error.message,
+            });
+        }
+    };
+
+    return (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-6 w-6">
+                    <Pencil className="h-4 w-4" />
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Edit Profile Name</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="name" className="text-right">
+                            Name
+                        </Label>
+                        <Input
+                            id="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="col-span-3"
+                        />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary">Cancel</Button>
+                    </DialogClose>
+                    <Button onClick={handleSave}>Save changes</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 function ProfilePage() {
   const { user, logout } = useAuth();
   const { toast } = useToast();
@@ -104,13 +169,16 @@ function ProfilePage() {
         <CardHeader>
           <div className="flex items-center space-x-4">
             <Avatar className="h-20 w-20">
-              <AvatarImage src="https://placehold.co/128x128.png" alt="User" data-ai-hint="person portrait" />
+              <AvatarImage src={user?.photoURL || "https://placehold.co/128x128.png"} alt="User" data-ai-hint="person portrait" />
               <AvatarFallback>
                 {isPhoneAuth ? <Phone /> : <Mail />}
               </AvatarFallback>
             </Avatar>
             <div>
-              <CardTitle className="text-2xl">{user?.displayName || "User"}</CardTitle>
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-2xl">{user?.displayName || "User"}</CardTitle>
+                <EditProfileDialog />
+              </div>
               <p className="text-muted-foreground">{user?.email || user?.phoneNumber}</p>
             </div>
           </div>
