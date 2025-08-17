@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { mockCategories } from '@/lib/mock-data';
 import { Search, Mic } from 'lucide-react';
@@ -9,10 +9,64 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { CategoryCard } from '@/components/category-card';
 import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isListening, setIsListening] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    // Check for SpeechRecognition API
+    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognitionRef.current = new SpeechRecognition();
+        const recognition = recognitionRef.current;
+        
+        recognition.continuous = false;
+        recognition.lang = 'en-IN';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = () => {
+            setIsListening(true);
+        };
+
+        recognition.onend = () => {
+            setIsListening(false);
+        };
+
+        recognition.onerror = (event: any) => {
+            console.error('Speech recognition error', event.error);
+            setIsListening(false);
+        };
+
+        recognition.onresult = (event: any) => {
+            const transcript = event.results[0][0].transcript;
+            setSearchQuery(transcript);
+        };
+    }
+  }, []);
+
+  const handleMicClick = () => {
+    if (!recognitionRef.current) {
+      toast({
+        variant: 'destructive',
+        title: 'Voice search not supported',
+        description: 'Your browser does not support the Web Speech API.',
+      });
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      recognitionRef.current.start();
+    }
+  };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,7 +94,9 @@ export default function Home() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <Mic className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <button type="button" onClick={handleMicClick} className="absolute right-3 top-1/2 -translate-y-1/2">
+            <Mic className={cn("h-5 w-5 text-muted-foreground transition-colors", isListening && "text-destructive")} />
+          </button>
         </form>
         <div className="flex justify-around mb-6">
             {categories.map(cat => (
@@ -71,4 +127,11 @@ export default function Home() {
       </div>
     </div>
   );
+}
+
+declare global {
+    interface Window {
+        SpeechRecognition: any;
+        webkitSpeechRecognition: any;
+    }
 }
