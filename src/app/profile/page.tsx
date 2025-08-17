@@ -152,9 +152,9 @@ function ProfilePage() {
         <CardHeader>
           <div className="flex items-center space-x-4">
             <Avatar className="h-20 w-20">
-              <AvatarImage src={user?.photoURL || "https://placehold.co/128x128.png"} alt="User" data-ai-hint="person portrait" />
-              <AvatarFallback>
-                {isPhoneAuth ? <Phone /> : <Mail />}
+              <AvatarImage src={user?.photoURL || undefined} alt="User" />
+              <AvatarFallback className="text-4xl bg-primary/10">
+                {user?.photoURL ? null : (isPhoneAuth ? '📞' : '✉️')}
               </AvatarFallback>
             </Avatar>
             <div>
