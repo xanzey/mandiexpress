@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { withProtected, useAuth } from "@/context/auth-provider";
-import { Mail, Phone, Home, Pencil, LogOut, MapPin } from "lucide-react";
+import { Mail, Phone, Home, Pencil, LogOut, MapPin, User as UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +22,8 @@ import {
 import { Label } from "@/components/ui/label";
 
 interface Address {
+    name: string;
+    phone: string;
     houseNo: string;
     street: string;
     landmark: string;
@@ -54,6 +56,8 @@ function ProfilePage() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const newAddress: Address = {
+        name: formData.get('name') as string,
+        phone: formData.get('phone') as string,
         houseNo: formData.get('houseNo') as string,
         street: formData.get('street') as string,
         landmark: formData.get('landmark') as string,
@@ -114,7 +118,7 @@ function ProfilePage() {
         <CardContent>
           <Separator className="my-4" />
           <div className="space-y-4">
-            <div>
+             <div>
               <div className="flex justify-between items-center">
                 <h4 className="font-semibold flex items-center gap-2"><Home className="h-4 w-4" /> Shipping Address</h4>
                 <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
@@ -138,6 +142,14 @@ function ProfilePage() {
                             </Button>
                         </div>
                         <form onSubmit={handleAddressSave} className="grid grid-cols-2 gap-4">
+                             <div className="col-span-2">
+                                <Label htmlFor="name">Full Name</Label>
+                                <Input id="name" name="name" defaultValue={address?.name || user?.displayName || ''} required />
+                            </div>
+                             <div className="col-span-2">
+                                <Label htmlFor="phone">Mobile Number</Label>
+                                <Input id="phone" name="phone" defaultValue={address?.phone || user?.phoneNumber || ''} required />
+                            </div>
                              <div className="col-span-2 sm:col-span-1">
                                 <Label htmlFor="houseNo">House No. / Flat</Label>
                                 <Input id="houseNo" name="houseNo" defaultValue={address?.houseNo} required />
@@ -172,20 +184,32 @@ function ProfilePage() {
                     </DialogContent>
                 </Dialog>
               </div>
-                <p className="text-muted-foreground mt-1 pl-6">
-                  {address ? formatAddress(address) : "Please add your shipping address."}
-                </p>
+                {address ? (
+                    <div className="text-muted-foreground mt-1 pl-6">
+                        <p className="font-semibold text-foreground">{address.name}</p>
+                        <p>{address.phone}</p>
+                        <p>{formatAddress(address)}</p>
+                    </div>
+                ) : (
+                    <p className="text-muted-foreground mt-1 pl-6">Please add your shipping address.</p>
+                )}
             </div>
+            {user?.displayName && (
+                <div>
+                    <h4 className="font-semibold flex items-center gap-2"><UserIcon className="h-4 w-4" /> Name</h4>
+                    <p className="text-muted-foreground pl-6">{user.displayName}</p>
+                </div>
+            )}
             {user?.phoneNumber && (
                 <div>
-                    <h4 className="font-semibold">Phone Number</h4>
-                    <p className="text-muted-foreground">{user.phoneNumber}</p>
+                    <h4 className="font-semibold flex items-center gap-2"><Phone className="h-4 w-4" /> Phone Number</h4>
+                    <p className="text-muted-foreground pl-6">{user.phoneNumber}</p>
                 </div>
             )}
             {user?.email && (
                  <div>
-                    <h4 className="font-semibold">Email</h4>
-                    <p className="text-muted-foreground">{user.email}</p>
+                    <h4 className="font-semibold flex items-center gap-2"><Mail className="h-4 w-4" /> Email</h4>
+                    <p className="text-muted-foreground pl-6">{user.email}</p>
                 </div>
             )}
              <div>
@@ -205,5 +229,3 @@ function ProfilePage() {
 }
 
 export default withProtected(ProfilePage);
-
-    
