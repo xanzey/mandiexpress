@@ -44,7 +44,7 @@ function PhoneLoginForm() {
       toast({
         variant: "destructive",
         title: "Failed to send OTP",
-        description: error.message,
+        description: "Please check the phone number and try again.",
       });
     } finally {
       setLoading(false);
@@ -64,7 +64,7 @@ function PhoneLoginForm() {
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: error.message,
+        description: "The OTP you entered is incorrect. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -133,7 +133,7 @@ function EmailLoginForm() {
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: error.message,
+        description: "Invalid email or password. Please try again.",
       });
     } finally {
       setLoading(false);

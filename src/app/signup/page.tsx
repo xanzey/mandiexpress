@@ -44,7 +44,7 @@ function PhoneSignupForm() {
       toast({
         variant: "destructive",
         title: "Failed to send OTP",
-        description: error.message,
+        description: "Please check the phone number and try again.",
       });
     } finally {
       setLoading(false);
@@ -65,7 +65,7 @@ function PhoneSignupForm() {
       toast({
         variant: "destructive",
         title: "Signup Failed",
-        description: error.message,
+        description: "The OTP you entered is incorrect. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -135,7 +135,7 @@ function EmailSignupForm() {
       toast({
         variant: "destructive",
         title: "Signup Failed",
-        description: error.message,
+        description: "This email may already be in use. Please try another.",
       });
     } finally {
       setLoading(false);
