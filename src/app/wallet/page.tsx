@@ -4,12 +4,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { withProtected } from "@/context/auth-provider";
-import { Copy, Gift, Wallet as WalletIcon } from "lucide-react";
+import { Copy, Gift, Wallet as WalletIcon, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 function WalletPage() {
     const { toast } = useToast();
     const referralCode = "MANDI123";
+    const referralText = `Hey! I'm using MandiExpress for fresh groceries. Sign up with my code ${referralCode} and we both get ₹50!`;
 
     const handleCopyReferral = () => {
         navigator.clipboard.writeText(referralCode);
@@ -17,6 +18,26 @@ function WalletPage() {
             title: "Referral code copied!",
             description: "Share it with your friends to earn rewards.",
         });
+    };
+
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Refer a friend to MandiExpress',
+                    text: referralText,
+                    url: window.location.origin,
+                });
+            } catch (error) {
+                // This can happen if the user cancels the share dialog, so we don't show an error.
+            }
+        } else {
+            navigator.clipboard.writeText(referralText);
+            toast({
+                title: "Referral message copied!",
+                description: "The Web Share API is not supported in your browser.",
+            });
+        }
     };
 
     return (
@@ -64,6 +85,9 @@ function WalletPage() {
                             </p>
                             <Button variant="outline" size="icon" onClick={handleCopyReferral}>
                                 <Copy className="h-4 w-4" />
+                            </Button>
+                            <Button variant="outline" size="icon" onClick={handleShare}>
+                                <Share2 className="h-4 w-4" />
                             </Button>
                         </div>
                     </CardContent>
