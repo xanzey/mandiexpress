@@ -40,7 +40,11 @@ export default function Home() {
         };
 
         recognition.onerror = (event: any) => {
-            console.error('Speech recognition error', event.error);
+            toast({
+                variant: 'destructive',
+                title: 'Voice search error',
+                description: `There was a problem with the speech recognition service: ${event.error}. Please check your network connection and try again.`,
+            });
             setIsListening(false);
         };
 
@@ -49,7 +53,7 @@ export default function Home() {
             setSearchQuery(transcript);
         };
     }
-  }, []);
+  }, [toast]);
 
   const handleMicClick = () => {
     if (!recognitionRef.current) {
