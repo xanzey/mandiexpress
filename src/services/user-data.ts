@@ -18,5 +18,6 @@ export async function getUserData(userId: string) {
 export async function updateUserData(userId: string, data: object) {
     const userRef = doc(db, "users", userId);
     // Use merge: true to only update the fields provided, and not overwrite the entire document.
+    // This will also create the document if it doesn't exist.
     await setDoc(userRef, data, { merge: true });
 }
