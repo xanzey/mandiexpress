@@ -15,7 +15,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-green-500 to-green-600 text-primary-foreground shadow-md">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="flex h-16 items-center justify-between px-4">
         <Link href="/" className="text-3xl font-logo tracking-wider">
             MandiExpress
         </Link>
