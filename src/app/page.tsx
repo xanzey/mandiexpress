@@ -3,7 +3,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { mockCategories } from '@/lib/mock-data';
+import { mockCategories, mockProducts } from '@/lib/mock-data';
+import type { Product } from '@/types';
 import { Search, Mic } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
@@ -12,13 +13,16 @@ import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [isListening, setIsListening] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
   const recognitionRef = useRef<any>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
   // For typing animation
   const [placeholder, setPlaceholder] = useState('');
@@ -26,7 +30,6 @@ export default function Home() {
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const suggestionsPlaceholder = ['"fresh vegetables"', '"juicy fruits"', '"dairy products"', '"exotic spices"'];
-  const searchSuggestions = ['Tomatoes', 'Potatoes', 'Onions', 'Kurkure'];
 
   useEffect(() => {
     const handleTyping = () => {
@@ -41,7 +44,6 @@ export default function Home() {
       }
 
       if (!isDeleting && charIndex === currentSuggestion.length) {
-        // Pause at end of word
         setTimeout(() => setIsDeleting(true), 2000);
       } else if (isDeleting && charIndex === 0) {
         setIsDeleting(false);
@@ -55,7 +57,6 @@ export default function Home() {
 
 
   useEffect(() => {
-    // Check for SpeechRecognition API
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         recognitionRef.current = new SpeechRecognition();
@@ -92,6 +93,28 @@ export default function Home() {
         };
     }
   }, [toast, router]);
+  
+  useEffect(() => {
+    if (searchQuery.trim()) {
+        const filtered = mockProducts.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+        setSuggestions(filtered);
+    } else {
+        setSuggestions([]);
+    }
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setSuggestions([]);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleMicClick = () => {
     if (!recognitionRef.current) {
@@ -116,10 +139,13 @@ export default function Home() {
       router.push(`/products?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    router.push(`/products?q=${encodeURIComponent(suggestion.trim())}`);
+  
+  const handleSuggestionClick = (product: Product) => {
+    setSearchQuery('');
+    setSuggestions([]);
+    router.push(`/products/${product.id}`);
   };
+
 
   const categories = [
     { name: 'All', icon: 'https://placehold.co/48x48.png', dataAiHint: 'store', href: '/products' },
@@ -132,33 +158,38 @@ export default function Home() {
   return (
     <div className="bg-primary/5">
       <div className="container pt-4 pb-8">
-        <form onSubmit={handleSearch} className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input 
-            placeholder={`Search ${placeholder}|`}
-            className="pl-10 pr-10 h-12 rounded-xl shadow-sm" 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <button type="button" onClick={handleMicClick} className="absolute right-3 top-1/2 -translate-y-1/2">
-            <Mic className={cn("h-5 w-5 text-muted-foreground transition-colors", isListening && "text-destructive")} />
-          </button>
-        </form>
-        <div className="flex flex-wrap items-center gap-2 mb-6">
-            <span className="text-sm font-medium text-muted-foreground">Popular:</span>
-            {searchSuggestions.map((suggestion) => (
-                <Button 
-                    key={suggestion}
-                    variant="outline"
-                    size="sm"
-                    className="rounded-full h-7"
-                    onClick={() => handleSuggestionClick(suggestion)}
-                >
-                    {suggestion}
-                </Button>
-            ))}
+        <div ref={searchContainerRef} className="relative mb-4">
+            <form onSubmit={handleSearch} className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input 
+                placeholder={`Search ${placeholder}|`}
+                className="pl-10 pr-10 h-12 rounded-xl shadow-sm" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button type="button" onClick={handleMicClick} className="absolute right-3 top-1/2 -translate-y-1/2">
+                <Mic className={cn("h-5 w-5 text-muted-foreground transition-colors", isListening && "text-destructive")} />
+              </button>
+            </form>
+            {suggestions.length > 0 && (
+                <Card className="absolute top-full mt-2 w-full z-10 max-h-60 overflow-y-auto">
+                    <ul>
+                        {suggestions.map(product => (
+                            <li key={product.id}>
+                                <button 
+                                    onClick={() => handleSuggestionClick(product)}
+                                    className="w-full text-left px-4 py-2 hover:bg-muted"
+                                >
+                                    {product.name}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </Card>
+            )}
         </div>
-        <div className="flex justify-around mb-6">
+        
+        <div className="flex justify-around my-6">
             {categories.map(cat => (
                 <Link href={cat.href} key={cat.name} className="flex flex-col items-center gap-2">
                     <div className={`p-1 rounded-full shadow-sm transition-transform hover:scale-105 ${cat.name === 'All' ? 'bg-primary' : ''}`}>
