@@ -11,6 +11,7 @@ import { CategoryCard } from '@/components/category-card';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,11 +25,12 @@ export default function Home() {
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const suggestions = ['"fresh vegetables"', '"juicy fruits"', '"dairy products"', '"exotic spices"'];
+  const suggestionsPlaceholder = ['"fresh vegetables"', '"juicy fruits"', '"dairy products"', '"exotic spices"'];
+  const searchSuggestions = ['Tomatoes', 'Potatoes', 'Onions', 'Kurkure'];
 
   useEffect(() => {
     const handleTyping = () => {
-      const currentSuggestion = suggestions[placeholderIndex];
+      const currentSuggestion = suggestionsPlaceholder[placeholderIndex];
       
       if (isDeleting) {
         setPlaceholder(currentSuggestion.substring(0, charIndex - 1));
@@ -43,13 +45,13 @@ export default function Home() {
         setTimeout(() => setIsDeleting(true), 2000);
       } else if (isDeleting && charIndex === 0) {
         setIsDeleting(false);
-        setPlaceholderIndex((prev) => (prev + 1) % suggestions.length);
+        setPlaceholderIndex((prev) => (prev + 1) % suggestionsPlaceholder.length);
       }
     };
 
     const typingTimeout = setTimeout(handleTyping, isDeleting ? 100 : 150);
     return () => clearTimeout(typingTimeout);
-  }, [charIndex, isDeleting, placeholder, placeholderIndex, suggestions]);
+  }, [charIndex, isDeleting, placeholder, placeholderIndex, suggestionsPlaceholder]);
 
 
   useEffect(() => {
@@ -84,9 +86,12 @@ export default function Home() {
         recognition.onresult = (event: any) => {
             const transcript = event.results[0][0].transcript;
             setSearchQuery(transcript);
+            if (transcript.trim()) {
+                router.push(`/products?q=${encodeURIComponent(transcript.trim())}`);
+            }
         };
     }
-  }, [toast]);
+  }, [toast, router]);
 
   const handleMicClick = () => {
     if (!recognitionRef.current) {
@@ -112,6 +117,10 @@ export default function Home() {
     }
   };
 
+  const handleSuggestionClick = (suggestion: string) => {
+    router.push(`/products?q=${encodeURIComponent(suggestion.trim())}`);
+  };
+
   const categories = [
     { name: 'All', icon: 'https://placehold.co/48x48.png', dataAiHint: 'store', href: '/products' },
     { name: 'Vegetables', icon: 'https://placehold.co/48x48.png', dataAiHint: 'vegetables', href: '/products?category=vegetables' },
@@ -135,6 +144,20 @@ export default function Home() {
             <Mic className={cn("h-5 w-5 text-muted-foreground transition-colors", isListening && "text-destructive")} />
           </button>
         </form>
+        <div className="flex flex-wrap items-center gap-2 mb-6">
+            <span className="text-sm font-medium text-muted-foreground">Popular:</span>
+            {searchSuggestions.map((suggestion) => (
+                <Button 
+                    key={suggestion}
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full h-7"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                >
+                    {suggestion}
+                </Button>
+            ))}
+        </div>
         <div className="flex justify-around mb-6">
             {categories.map(cat => (
                 <Link href={cat.href} key={cat.name} className="flex flex-col items-center gap-2">
