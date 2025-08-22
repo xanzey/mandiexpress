@@ -8,7 +8,6 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Cart } from "@/components/cart";
 import { useCart } from "@/context/cart-provider";
 import { useAuth } from "@/context/auth-provider";
-import Image from 'next/image';
 
 export function Header() {
   const { isSheetOpen, setSheetOpen } = useCart();
@@ -18,7 +17,9 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-md">
       <div className="flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.png" alt="MandiExpress Logo" width={140} height={40} className="object-contain" />
+            <div className="font-logo text-3xl text-white drop-shadow-sm">
+                MandiExpress
+            </div>
         </Link>
         
         <div className="flex items-center gap-4">
