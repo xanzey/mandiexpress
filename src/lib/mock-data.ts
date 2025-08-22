@@ -10,6 +10,9 @@ export const mockProducts: Product[] = [
   { id: '7', name: 'Lays', price: 20, image: 'https://placehold.co/100x100.png', availability: 'In Stock', dataAiHint: 'potato chips' },
   { id: '8', name: 'Uncle Chips', price: 20, image: 'https://placehold.co/100x100.png', availability: 'In Stock', dataAiHint: 'snack' },
   { id: '9', name: 'Bingo', price: 20, image: 'https://placehold.co/100x100.png', availability: 'In Stock', dataAiHint: 'packaged food' },
+  { id: '10', name: 'Apples', price: 120, image: 'https://placehold.co/100x100.png', availability: 'In Stock', dataAiHint: 'apples' },
+  { id: '11', name: 'Bananas', price: 40, image: 'https://placehold.co/100x100.png', availability: 'In Stock', dataAiHint: 'bananas' },
+  { id: '12', name: 'Milk', price: 60, image: 'https://placehold.co/100x100.png', availability: 'In Stock', dataAiHint: 'milk carton' },
 ];
 
 export const mockCategories: Category[] = [
